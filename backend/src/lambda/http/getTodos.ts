@@ -8,15 +8,27 @@ import { getTodosForUser as getTodosForUser } from '../../businessLogic/todos'
 import { getUserId } from '../utils';
 
 // TODO: Get all TODO items for a current user
-export const handler = middy(
+const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    // Write your code here
-    const todos = '...'
+    const userId = getUserId(event);
 
-    return undefined
+    const todos = await getTodosForUser(userId);
+    
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        items: todos
+      })
+    };
+  }); 
 
 handler.use(
   cors({
     credentials: true
   })
-)
+);
+
+export const main = handler;
