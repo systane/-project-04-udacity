@@ -2,27 +2,25 @@ import { S3 } from "aws-sdk";
 import * as AWS from 'aws-sdk';
 import * as AWSXRAY from 'aws-xray-sdk';
 import { createLogger } from "../../../utils/logger";
-import { createAttachmentPresignedUrlGateway } from "../createAttachmentPresignedUrlGateway";
+import { deleteImageGatewayGateway } from "../deleteImageGateway";
 
 const XAWS = AWSXRAY.captureAWS(AWS);
 
-export class CreateAttachmentPresignedUrlGatewayImpl implements createAttachmentPresignedUrlGateway {
+export class DeleteImageGatewayGatewayImpl implements deleteImageGatewayGateway {
 
     constructor(
-        private readonly logger = createLogger('generateUploadUrl'),
+        private readonly logger = createLogger('deleteImage'),
         private readonly s3: S3 = createS3Client(),
         private readonly bucketName = process.env.ATTACHMENT_S3_BUCKET,
-        private readonly signedUrlExpiration = parseInt(process.env.SIGNED_URL_EXPIRATION),
     ){}
     
-    async execute(key: string): Promise<string> {
-        this.logger.info('Creating presigned url');
+    async execute(key: string): Promise<void> {
+        this.logger.info('Deleting image from bucket');
     
-        return this.s3.getSignedUrl('putObject', {
+        await this.s3.deleteObject({
             Bucket: this.bucketName,
-            Expires: this.signedUrlExpiration,
             Key: key
-        });
+        }).promise();
     };
 }
 

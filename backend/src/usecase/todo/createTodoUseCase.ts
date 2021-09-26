@@ -3,7 +3,7 @@ import { TodoRepository } from '../../repository/todoRepository';
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest';
 import * as uuid from 'uuid';
 
-const todoAccess = new TodoRepository();
+const todoRepository = new TodoRepository();
 
 export async function createTodo(
     createTodoRequest: CreateTodoRequest,
@@ -11,7 +11,7 @@ export async function createTodo(
 ): Promise<TodoItemModel> {
     const todoId = uuid.v4();
 
-    return await todoAccess.createTodo({
+    return await todoRepository.createTodo({
         todoId,
         userId,
         name: createTodoRequest.name,

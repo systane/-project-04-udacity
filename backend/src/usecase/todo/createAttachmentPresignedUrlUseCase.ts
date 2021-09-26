@@ -4,5 +4,6 @@ import { CreateAttachmentPresignedUrlGatewayImpl } from '../../gateway/s3/impl/c
 const createAttachmentPresignedUrlGateway: createAttachmentPresignedUrlGateway = new CreateAttachmentPresignedUrlGatewayImpl();
 
 export async function createAttachmentPresignedUrl(todoId: string, userId: string): Promise<string> {
-    return await createAttachmentPresignedUrlGateway.execute(todoId, userId);
+    const key = `${todoId}_${userId}`;
+    return await createAttachmentPresignedUrlGateway.execute(key);
 };
