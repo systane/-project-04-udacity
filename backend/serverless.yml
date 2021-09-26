@@ -1,23 +1,11 @@
-# org: serverlessprojectfour
-# app: serverless-todo-app
 service: serverless-todo-app
 
 plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
-  # - serverless-plugin-tracing
-  # - serverless-reqvalidator-plugin
   - serverless-aws-documentation
 package:
   individually: false
-
-iamRoleStatements:
-  - Effect: 'Allow'
-    Action:
-      - 'xray:PutTraceSegments'
-      - 'xray:PutTelemetryRecords'
-    Resource:
-        - '*'
 
 custom:
   documentation:
@@ -48,17 +36,15 @@ provider:
   logs:
     restApi: true
 
-  iam:
-    role:
-      statements:
-        - Effect: Allow
-          Action:
-            - xray:PutTelemetryRecords
-            - xray:PutTraceSegments
-          Resource: "*"
+iamRoleStatements:
+  - Effect: 'Allow'
+    Action:
+      - 'xray:PutTraceSegments'
+      - 'xray:PutTelemetryRecords'
+    Resource:
+        - '*'
 
 functions:
-
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
 
@@ -154,11 +140,10 @@ functions:
       - Effect: Allow
         Action:
           - s3:PutObject
-          - s3:GetObject
         Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
   
   UpdateAttachmentUrl:
-    handler: src/lambda/s3/updateAttachmentUrl.handler
+    handler: src/lambda/sns/updateAttachmentUrlHandler.handler
     events:
       - sns:
           arn:

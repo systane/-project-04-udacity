@@ -3,8 +3,8 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 
-import { deleteTodo } from '../../businessLogic/todoService'
-import { getUserId } from '../utils'
+import { deleteTodo } from '../../usecase/todo/deleteTodoUseCase'
+import { getUserId } from '../../utils/utils';
 import { createLogger } from '../../utils/logger';
 
 const logger = createLogger('deleteTodo');

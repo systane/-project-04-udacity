@@ -3,13 +3,11 @@ import 'source-map-support/register'
 
 import { verify, decode } from 'jsonwebtoken'
 import { createLogger } from '../../utils/logger'
-import { Jwt } from '../../auth/Jwt'
-import { JwtPayload } from '../../auth/JwtPayload'
-import { JwkClient } from '../../auth/jwtClient'
+import { JwtModel } from '../../models/JwtModel'
+import { JwtPayloadModel } from '../../models/JwtPayloadModel'
+import { GetSigningKey } from '../../usecase/auth/getSigninKeyUseCase'
 
 const logger = createLogger('auth')
-
-const jwksUrl = 'https://dev-s7jtff97.us.auth0.com/.well-known/jwks.json'
 
 export const handler = async (
   event: CustomAuthorizerEvent
@@ -51,26 +49,26 @@ export const handler = async (
   }
 };
 
-async function verifyToken(authHeader: string): Promise<JwtPayload> {
+async function verifyToken(authHeader: string): Promise<JwtPayloadModel> {
   const token = getToken(authHeader)
-  const jwt: Jwt = decode(token, { complete: true }) as Jwt
+  const jwt: JwtModel = decode(token, { complete: true }) as JwtModel
 
 
   if(jwt.header.alg !== 'RS256') {
-    logger.info('invalid token');
+    logger.error('invalid token');
     throw new Error('invalid token');
   }
 
-  const client = new JwkClient({jwksUrl});
-  const signingKey = await client.getSigningKey(jwt.header.kid);
-  return verify(token, signingKey.publicKey) as JwtPayload;
+  const client = new GetSigningKey();
+  const signingKey = await client.execute(jwt.header.kid);
+  return verify(token, signingKey.publicKey) as JwtPayloadModel;
 };
 
 function getToken(authHeader: string): string {
   if (!authHeader) throw new Error('No authentication header')
 
   if (!authHeader.toLowerCase().startsWith('bearer ')){
-    logger.info('invalid authentication header');
+    logger.error('invalid authentication header');
     throw new Error('Invalid authentication header')
   }
 

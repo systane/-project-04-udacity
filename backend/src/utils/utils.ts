@@ -1,5 +1,6 @@
+import { decode } from 'jsonwebtoken'
+import { JwtPayloadModel } from './../models/JwtPayloadModel'
 import { APIGatewayProxyEvent } from "aws-lambda";
-import { parseUserId } from "../auth/utils";
 
 /**
  * Get a user id from an API Gateway event
@@ -14,3 +15,15 @@ export function getUserId(event: APIGatewayProxyEvent): string {
 
   return parseUserId(jwtToken)
 }
+
+/**
+ * Parse a JWT token and return a user id
+ * @param jwtToken JWT token to parse
+ * @returns a user id from the JWT token
+ */
+export function parseUserId(jwtToken: string): string {
+  const decodedJwt = decode(jwtToken) as JwtPayloadModel
+  return decodedJwt.sub
+}
+
+

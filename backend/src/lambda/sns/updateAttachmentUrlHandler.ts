@@ -2,10 +2,11 @@ import { S3Event, SNSEvent, SNSHandler } from 'aws-lambda';
 import 'source-map-support/register';
 
 import { createLogger } from "../../utils/logger";
-import { updateAttachmentUrl } from "../../businessLogic/todoService";
+import { updateAttachmentUrl } from "../../usecase/todo/updateAttachmentUrlUseCase";
 
 const logger = createLogger('updateUploadUrl');
 
+//This handler reads events from SNS that are trigged by any upload of images done in the bucket
 export const handler: SNSHandler = async (event: SNSEvent) => {
     logger.info('Processing SNS event ', JSON.stringify(event));
 

@@ -1,25 +1,22 @@
 import * as AWS from 'aws-sdk';
 import * as AWSXRAY from 'aws-xray-sdk';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { TodoItem } from '../models/TodoItem';
-import { TodoUpdate } from '../models/TodoUpdate';
-import { S3 } from 'aws-sdk';
+import { TodoItemModel } from '../models/TodoItemModel';
+import { TodoUpdateModel } from '../models/TodoUpdateModel';
 import { createLogger } from '../utils/logger';
 
 const XAWS = AWSXRAY.captureAWS(AWS);
 
-export class TodoAccess {
+export class TodoRepository {
 
     constructor(
         private readonly docClient: DocumentClient = createDynamoDBClient(),
         private readonly todosTable = process.env.TODOS_TABLE,
         private readonly indexName = process.env.USER_ID_INDEX,
-        private readonly s3: S3 = createS3Client(),
         private readonly bucketName = process.env.ATTACHMENT_S3_BUCKET,
-        private readonly signedUrlExpiration = parseInt(process.env.SIGNED_URL_EXPIRATION),
     ){};
 
-    async getAllTodos(userId: string): Promise<TodoItem[]> {
+    async getAllTodos(userId: string): Promise<TodoItemModel[]> {
         const logger = createLogger('getAllTodos'); 
         logger.info('Getting all todos');
 
@@ -37,10 +34,10 @@ export class TodoAccess {
         }).promise();
 
         const items = result.Items;
-        return items as TodoItem[];
+        return items as TodoItemModel[];
     };
 
-    async createTodo(todo: TodoItem): Promise<TodoItem> {
+    async createTodo(todo: TodoItemModel): Promise<TodoItemModel> {
         const logger = createLogger('createTodo');
         logger.info(`Creating a todo with id ${todo.todoId}`);
 
@@ -52,7 +49,7 @@ export class TodoAccess {
         return todo;
     };
 
-    async updateTodo(userId: string, todoId: string, todoUpdate: TodoUpdate): Promise<TodoUpdate> {
+    async updateTodo(userId: string, todoId: string, todoUpdate: TodoUpdateModel): Promise<TodoUpdateModel> {
         const logger = createLogger('updateTodo');
         logger.info(`Updating a todo with name ${todoUpdate.name}`);
 
@@ -101,7 +98,7 @@ export class TodoAccess {
         }).promise();
     };
 
-    async getTodo(todoId: string, userId: string): Promise<TodoItem> {
+    async getTodo(todoId: string, userId: string): Promise<TodoItemModel> {
         const logger = createLogger('getTodo'); 
         logger.info('Getting todos by todoid and userId');
 
@@ -116,18 +113,7 @@ export class TodoAccess {
         }).promise();
 
         const items = result.Items;
-        return items[0] as TodoItem;
-    };
-
-    async createAttachmentPresignedUrl(todoId: string, userId: string): Promise<string> {
-        const logger = createLogger('generateUploadUrl');
-        logger.info('Creating presigned url');
-
-        return await this.s3.getSignedUrl('putObject', {
-            Bucket: this.bucketName,
-            Expires: this.signedUrlExpiration,
-            Key: `${todoId}_${userId}`
-        });
+        return items[0] as TodoItemModel;
     };
 
     async updateAttachmentUrl(todoId: string, userId: string, imageId: string): Promise<void> {
@@ -162,13 +148,4 @@ function createDynamoDBClient() {
     }
 
     return new AWS.DynamoDB.DocumentClient();
-};
-
-function createS3Client() {
-    if(process.env.IS_OFFLINE) {
-        console.log('Creating a local s3 instance');
-        return new AWS.S3({signatureVersion: 'v4'});
-    }
-
-    return new XAWS.S3({signatureVersion: 'v4'});
 };

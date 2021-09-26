@@ -1,4 +1,7 @@
-export interface Jwk {
+/**
+ * Interface representing a Json Web Key (jwk)
+ */
+export interface JwkModel {
     alg: string
     kty: string
     use: string

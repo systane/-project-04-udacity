@@ -2,8 +2,8 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import 'source-map-support/register'
 import * as middy from 'middy'
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
-import { getUserId } from '../utils';
-import { createTodo } from '../../businessLogic/todoService'
+import { getUserId } from '../../utils/utils';
+import { createTodo } from '../../usecase/todo/createTodoUseCase'
 import { createLogger } from '../../utils/logger';
 
 const logger = createLogger('createTodo');

@@ -3,9 +3,9 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 
-import { updateTodo } from '../../businessLogic/todoService'
+import { updateTodo } from '../../usecase/todo/updateTodoUseCase'
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
-import { getUserId } from '../utils'
+import { getUserId } from '../../utils/utils';
 import { createLogger } from '../../utils/logger';
 
 const logger = createLogger('updateTodo');

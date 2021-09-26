@@ -3,9 +3,9 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 
-import { createAttachmentPresignedUrl } from '../../businessLogic/todoService'
+import { createAttachmentPresignedUrl } from '../../usecase/todo/createAttachmentPresignedUrlUseCase'
 import { createLogger } from '../../utils/logger';
-import { getUserId } from '../utils';
+import { getUserId } from '../../utils/utils';
 
 const logger = createLogger('generateUploadUrl');
 
