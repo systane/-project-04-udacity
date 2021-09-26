@@ -7,6 +7,7 @@ To implement this project, you need to implement a simple TODO application using
 The directory structure of this project was refactored as shown in the below image
 ![Alt text](images/directory_structure.png?raw=true "Image 6")
 
+```
 backend
 |-- src
     |
@@ -17,6 +18,7 @@ backend
     |--- Models --> Contains all application models 
     |--- Utils --> Contains utils files (log and jwt decode)
     |--- Requests --> DTOs recevied in the handlers
+```
 
 # Functionality of the application
 
