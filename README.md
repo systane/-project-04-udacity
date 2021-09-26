@@ -2,6 +2,24 @@
 
 To implement this project, you need to implement a simple TODO application using AWS Lambda and Serverless framework. Search for all comments starting with the `TODO:` in the code to find the placeholders that you need to implement.
 
+# Directory structure
+
+The directory structure of this project was refactored as shown in the below image
+![Alt text](images/directory_structure.png?raw=true "Image 6")
+
+```
+backend
+|-- src
+    |
+    |--- UseCase --> Contains all files related to business logic
+    |--- Gateway --> Contains all files related to external services
+    |--- Repository --> Contains all files related to database
+    |--- Lambda --> Contains all lambda handlers 
+    |--- Models --> Contains all application models 
+    |--- Utils --> Contains utils files (log and jwt decode)
+    |--- Requests --> DTOs recevied in the handlers
+```
+
 # Functionality of the application
 
 This application will allow creating/removing/updating/fetching TODO items. Each TODO item can optionally have an attachment image. Each user only has access to TODO items that he/she has created.
