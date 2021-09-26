@@ -9,9 +9,6 @@ import { JwkClient } from '../../auth/jwtClient'
 
 const logger = createLogger('auth')
 
-// TODO: Provide a URL that can be used to download a certificate that can be used
-// to verify JWT token signature.
-// To get this URL you need to go to an Auth0 page -> Show Advanced Settings -> Endpoints -> JSON Web Key Set
 const jwksUrl = 'https://dev-s7jtff97.us.auth0.com/.well-known/jwks.json'
 
 export const handler = async (
@@ -60,6 +57,7 @@ async function verifyToken(authHeader: string): Promise<JwtPayload> {
 
 
   if(jwt.header.alg !== 'RS256') {
+    logger.info('invalid token');
     throw new Error('invalid token');
   }
 
@@ -71,8 +69,10 @@ async function verifyToken(authHeader: string): Promise<JwtPayload> {
 function getToken(authHeader: string): string {
   if (!authHeader) throw new Error('No authentication header')
 
-  if (!authHeader.toLowerCase().startsWith('bearer '))
+  if (!authHeader.toLowerCase().startsWith('bearer ')){
+    logger.info('invalid authentication header');
     throw new Error('Invalid authentication header')
+  }
 
   const split = authHeader.split(' ')
   const token = split[1]

@@ -11,7 +11,7 @@ export class JwkClient {
     }
 
     async getJwks(): Promise<Jwk[]> {
-        const response = await Axios.get(this.options.jwksUri, {
+        const response = await Axios.get(this.options.jwksUrl, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -31,7 +31,7 @@ export class JwkClient {
         .map(jwk => {
             return {kid: jwk.kid, publicKey: certificateToPem(jwk.x5c[0])} as SignKey;
         });
-
+        
         if(!signingKeys.length) {
             throw new Error('Internal error - there is no valid signature verification key');
             
@@ -53,8 +53,9 @@ export class JwkClient {
 }
 
 export function certificateToPem(certificate: string): string {
-    let pem = certificate.match(/.{1, 64}/g).join('\n');
-    return `-----BEGIN CERTIFICATE-----\n${pem}\n-----END CERTIFICATE-----\n`;
+    return '-----BEGIN CERTIFICATE-----\n' +
+    certificate +
+    '\n-----END CERTIFICATE-----';
 };
 
 export function filterValidJwk(jwk: Jwk) {
